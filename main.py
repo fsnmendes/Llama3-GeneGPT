@@ -7,7 +7,13 @@ GeneGPT: teach LLMs to use NCBI API
 import json
 import openai
 import config
+client = OpenAI(
+    base_url = 'http://localhost:11434/v1',
+    api_key='ollama', # required, but unused
+)
 openai.api_key = config.API_KEY
+
+
 
 import os
 import re
@@ -150,7 +156,7 @@ if __name__ == '__main__':
 					q_prompt = q_prompt[len(q_prompt) - cut_length:]
 				
 				body = {
-				  "model": "code-davinci-002",
+				  "model": "llama3:8b",
 				  "prompt": q_prompt,
 				  "max_tokens": 512,
 				  "temperature": 0,
@@ -167,7 +173,7 @@ if __name__ == '__main__':
 
 				try:
 					prev_call = time.time()
-					response = openai.Completion.create(**body)
+					response = client.Completion.create(**body)
 				except openai.error.InvalidRequestError:
 					output.append([question, answer, 'lengthError', prompts])
 					break
